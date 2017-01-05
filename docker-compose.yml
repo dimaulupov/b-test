@@ -1,0 +1,53 @@
+version: '2'
+services:
+  db:
+    image: postgres
+  redis:
+    image: redis
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ./start.sh
+    mem_limit: 450m
+    memswap_limit: 0
+    ports:
+      - 8000:8000
+    links:
+      - db:database
+      - redis:cache
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_URL=postgres://postgres@database/postgres
+      - CACHE_URL=redis://cache/0
+      - BROKER_URL=redis://cache/1
+#  worker:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: worker
+#    mem_limit: 450m
+#    memswap_limit: 0
+#    links:
+#      - db:database
+#      - redis:cache
+#    environment:
+#      - PYTHONUNBUFFERED=1
+#      - DATABASE_URL=postgres://postgres@database/postgres
+#      - CACHE_URL=redis://cache/0
+#      - BROKER_URL=redis://cache/1
+#  beat:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    command: beat
+#    mem_limit: 100m
+#    memswap_limit: 0
+#    links:
+#      - db:database
+#      - redis:cache
+#    environment:
+#      - PYTHONUNBUFFERED=1
+#      - DATABASE_URL=postgres://postgres@database/postgres
+#      - CACHE_URL=redis://cache/0
+#      - BROKER_URL=redis://cache/1
